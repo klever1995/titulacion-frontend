@@ -1,0 +1,46 @@
+/* Estilos exclusivos para KpiCards (Totalmente independientes) */
+
+.kpi-dash-container {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.kpi-dash-container h2 {
+  font-size: 18px;
+  color: #1e293b;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 10px;
+}
+
+.kpi-dash-grid { 
+  display: grid; 
+  /* Forzamos exactamente 7 columnas iguales */
+  grid-template-columns: repeat(7, 1fr); 
+  gap: 10px; /* Reducimos un poco el espacio para que quepan */
+  margin-top: 15px;
+}
+
+.kpi-dash-card { 
+  background: #f8fafc; 
+  border: 1px solid #e2e8f0; 
+  padding: 15px; 
+  border-radius: 8px; 
+  text-align: center; 
+  border-left: 4px solid #3b82f6; 
+}
+
+.kpi-dash-card h3 { 
+  font-size: 12px; 
+  color: #64748b; 
+  text-transform: uppercase; 
+  margin-bottom: 10px; 
+}
+
+.kpi-dash-card p { 
+  font-size: 24px; 
+  font-weight: bold; 
+  color: #0f172a; 
+}

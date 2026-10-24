@@ -1,0 +1,61 @@
+/* Estilos exclusivos para Dashboard (Totalmente independientes) */
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dash-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.filtros-card {
+  margin-bottom: 20px;
+}
+
+.filtros-titulo {
+  font-size: 16px;
+  color: #1e293b;
+  margin-bottom: 15px;
+}
+
+.filtros-grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: nowrap;
+  align-items: center;
+  margin-top: 15px;
+  overflow-x: auto;
+}
+
+.dash-select, 
+.dash-date {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  min-width: 140px;
+  flex: 1;
+  outline: none;
+}
+
+.dash-btn-secondary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+  color: white;
+  background-color: #8b5cf6;
+  white-space: nowrap;
+  height: 100%;
+}
+
+.dash-btn-secondary:hover {
+  background-color: #7c3aed;
+}

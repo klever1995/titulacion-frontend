@@ -1,0 +1,7 @@
+services:
+  bi_frontend:
+    image: ksrobalino/bi_frontend:latest
+    container_name: bi_frontend
+    ports:
+      - "80:80"
+    restart: always

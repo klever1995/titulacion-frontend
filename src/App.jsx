@@ -1,103 +1,55 @@
 import { useState } from 'react';
-import axios from 'axios';
-import UploadForm from './components/UploadForm';
-import KpiCards from './components/KpiCards';
+import logo from './assets/logo3.png';
+import CargaEtl from './components/CargaEtl';
+import Perfilado from './components/Perfilado';
+import ResultadoEtl from './components/ResultadoEtl';
 import QualityReport from './components/QualityReport';
-import ComparisonTables from './components/ComparisonTables';
-import DynamicCharts from './components/DynamicCharts';
+import Dashboard from './components/Dashboard';
 import MlAnalysis from './components/MlAnalysis';
 import './App.css';
 
 function App() {
-  const [loading, setLoading] = useState(false);
-  const [mensaje, setMensaje] = useState('');
-  const [kpis, setKpis] = useState(null);
-  const [calidad, setCalidad] = useState(null);
-  const [sucios, setSucios] = useState([]);
-  const [limpios, setLimpios] = useState([]);
-  
-  // Estado para controlar la pestaña activa
-  const [activeTab, setActiveTab] = useState('rubrica'); 
+  const [etlEjecutado, setEtlEjecutado] = useState(false);
+  const [activeTab, setActiveTab] = useState('carga');
+  // Estado global del análisis ML: sobrevive al cambiar de ventana
+  const [mlData, setMlData] = useState(null);
 
-  const handleUpload = async (files) => {
-    setLoading(true);
-    setMensaje('');
-
-    const formData = new FormData();
-    formData.append('crm', files.crm);
-    formData.append('tickets', files.tickets);
-    formData.append('encuestas', files.encuestas);
-
-    try {
-      const res = await axios.post('/api/upload-etl', formData);
-      setMensaje(res.data.message);
-      
-      const [resSucios, resLimpios, resKpis, resCalidad] = await Promise.all([
-        axios.get('/api/sucios'),
-        axios.get('/api/limpios'),
-        axios.get('/api/kpis'),
-        axios.get('/api/calidad')
-      ]);
-
-      setSucios(resSucios.data);
-      setLimpios(resLimpios.data);
-      setKpis(resKpis.data);
-      setCalidad(resCalidad.data);
-    } catch (error) {
-      console.error(error);
-      setMensaje('Error al procesar los archivos.');
-    } finally {
-      setLoading(false);
-    }
+  // Al completar un ETL nuevo, se invalida el análisis ML anterior
+  const handleEtlCompletado = () => {
+    setEtlEjecutado(true);
+    setMlData(null);
   };
 
   return (
     <div className="App">
       <header className="app-header">
-        <h1>Plataforma BI - Calidad de Servicio</h1>
-        <p>Proyecto de Titulación - Complexivo</p>
+        <img src={logo} alt="Logo UCE" className="header-logo" />
+        <div className="header-content">
+          <div className="header-text">
+            <h1>Plataforma Analítica para Calidad del Servicio y Satisfacción</h1>
+            <p className="header-subtitle">Facultad de Ingeniería y Ciencias Aplicadas - Carrera de Sistemas de Información</p>
+            <p className="header-student">Estudiante: Robalino Guamán Klever Sandro</p>
+          </div>
+        </div>
       </header>
 
       <main className="app-main">
-        <UploadForm onUpload={handleUpload} loading={loading} />
-        
-        {mensaje && <div className="alert-success">{mensaje}</div>}
+        <div className="tabs-container">
+          <button className={`tab-btn ${activeTab === 'carga' ? 'active' : ''}`} onClick={() => setActiveTab('carga')}>1. Carga ETL</button>
+          <button className={`tab-btn ${activeTab === 'perfilado' ? 'active' : ''}`} onClick={() => setActiveTab('perfilado')} disabled={!etlEjecutado}>2. Perfilado</button>
+          <button className={`tab-btn ${activeTab === 'resultado' ? 'active' : ''}`} onClick={() => setActiveTab('resultado')} disabled={!etlEjecutado}>3. Resultado ETL</button>
+          <button className={`tab-btn ${activeTab === 'calidad' ? 'active' : ''}`} onClick={() => setActiveTab('calidad')} disabled={!etlEjecutado}>4. Calidad</button>
+          <button className={`tab-btn ${activeTab === 'kpis' ? 'active' : ''}`} onClick={() => setActiveTab('kpis')} disabled={!etlEjecutado}>5. KPIs</button>
+          <button className={`tab-btn ${activeTab === 'factores' ? 'active' : ''}`} onClick={() => setActiveTab('factores')} disabled={!etlEjecutado}>6. Factores ML</button>
+        </div>
 
-        {/* Sistema de Pestañas */}
-        {kpis && (
-          <>
-            <div className="tabs-container">
-              <button 
-                className={`tab-btn ${activeTab === 'rubrica' ? 'active' : ''}`}
-                onClick={() => setActiveTab('rubrica')}
-              >
-                Dashboard Principal (Rúbrica)
-              </button>
-              <button 
-                className={`tab-btn ${activeTab === 'mejoras' ? 'active' : ''}`}
-                onClick={() => setActiveTab('mejoras')}
-              >
-                Análisis Avanzado y Calidad
-              </button>
-            </div>
-
-            {/* Contenido de la Pestaña 1: Lo que pide el PDF */}
-            {activeTab === 'rubrica' && (
-              <div className="tab-content">
-                <KpiCards kpis={kpis} />
-                <ComparisonTables sucios={sucios} limpios={limpios} />
-                <DynamicCharts limpios={limpios} />
-              </div>
-            )}
-
-            {/* Contenido de la Pestaña 2: Las mejoras de la IA */}
-            {activeTab === 'mejoras' && (
-              <div className="tab-content">
-                <QualityReport calidad={calidad} />
-                <MlAnalysis />
-              </div>
-            )}
-          </>
+        {activeTab === 'carga' && <CargaEtl onEtlCompletado={handleEtlCompletado} />}
+        {activeTab === 'perfilado' && etlEjecutado && <Perfilado />}
+        {activeTab === 'resultado' && etlEjecutado && <ResultadoEtl />}
+        {activeTab === 'calidad' && etlEjecutado && <QualityReport />}
+        {activeTab === 'kpis' && etlEjecutado && <Dashboard />}
+        {activeTab === 'factores' && etlEjecutado && (
+          <MlAnalysis data={mlData} setData={setMlData} />
         )}
       </main>
     </div>

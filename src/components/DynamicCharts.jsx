@@ -1,96 +1,105 @@
-import { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Legend } from 'recharts';
+import { useState, useEffect } from 'react';
+import api from '../api';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import '../styles/DynamicCharts.css';
 
-export default function DynamicCharts({ limpios }) {
-  const [dimension, setDimension] = useState('categoria'); // Selector restaurado
-
-  if (!limpios || limpios.length === 0) return null;
-
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
-  // Lógica para agrupar datos según la dimensión
-  let chartData = [];
+export default function DynamicCharts({ desgloseMes }) {
+  const [dataCanal, setDataCanal] = useState([]);
+  const [dataCategoria, setDataCategoria] = useState([]);
+  const [dataAgente, setDataAgente] = useState([]);
+  const [dataSegmento, setDataSegmento] = useState([]);
   
-  if (dimension === 'agente') {
-    // Para agente calculamos el tiempo promedio
-    const dataAgrupada = limpios.reduce((acc, item) => {
-      if (!acc[item.agente]) acc[item.agente] = { suma: 0, count: 0 };
-      acc[item.agente].suma += item.tiempo_resolucion_horas;
-      acc[item.agente].count += 1;
-      return acc;
-    }, {});
-    chartData = Object.keys(dataAgrupada).map(k => ({ 
-      name: k, 
-      cantidad: parseFloat((dataAgrupada[k].suma / dataAgrupada[k].count).toFixed(2))
-    }));
-  } else if (dimension === 'periodo') {
-    // Para periodo agrupamos por año-mes
-    const dataAgrupada = limpios.reduce((acc, item) => {
-      const mes = item.fecha_apertura ? item.fecha_apertura.substring(0, 7) : 'Sin fecha';
-      acc[mes] = (acc[mes] || 0) + 1;
-      return acc;
-    }, {});
-    chartData = Object.keys(dataAgrupada).sort().map(k => ({ name: k, cantidad: dataAgrupada[k] }));
-  } else {
-    // Para categoria, canal y segmento (conteo simple)
-    const dataAgrupada = limpios.reduce((acc, item) => {
-      const val = item[dimension] || 'Sin dato';
-      acc[val] = (acc[val] || 0) + 1;
-      return acc;
-    }, {});
-    chartData = Object.keys(dataAgrupada).map(k => ({ name: k, cantidad: dataAgrupada[k] }));
-  }
+  useEffect(() => {
+    Promise.all([
+      api.get('/kpis/desglose?por=canal'),
+      api.get('/kpis/desglose?por=categoria'),
+      api.get('/kpis/desglose?por=agente'),
+      api.get('/kpis/desglose?por=segmento')
+    ]).then(([resCanal, resCat, resAgente, resSeg]) => {
+      setDataCanal(resCanal.data.map(d => ({ name: d.canal, cantidad: d.total_tickets })));
+      setDataCategoria(resCat.data.map(d => ({ name: d.categoria, cantidad: d.total_tickets })));
+      setDataAgente(resAgente.data.map(d => ({ name: d.agente, cantidad: d.tiempo_promedio }))); 
+      
+      const segmentosAgrupados = resSeg.data.reduce((acc, d) => {
+        let nombre = d.segmento;
+        if (!nombre || nombre.toLowerCase() === 'nan' || nombre === 'Sin clasificar') {
+          nombre = 'Sin clasificar';
+        }
+        acc[nombre] = (acc[nombre] || 0) + d.total_tickets;
+        return acc;
+      }, {});
+      
+      setDataSegmento(Object.keys(segmentosAgrupados).map(k => ({ name: k, value: segmentosAgrupados[k] })));
+    }).catch(console.error);
+  }, []);
 
-  // Función para renderizar el gráfico correcto según la dimensión
-  const renderChart = () => {
-    if (dimension === 'periodo') {
-      return (
-        <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" /><YAxis /><Tooltip />
-          <Line type="monotone" dataKey="cantidad" stroke="#ef4444" strokeWidth={3} />
-        </LineChart>
-      );
-    } else if (dimension === 'segmento') {
-      return (
-        <PieChart>
-          <Pie data={chartData} dataKey="cantidad" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
-            {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip /><Legend />
-        </PieChart>
-      );
-    } else {
-      return (
-        <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" /><YAxis /><Tooltip />
-          <Bar dataKey="cantidad" fill={dimension === 'agente' ? '#8b5cf6' : '#3b82f6'} />
-        </BarChart>
-      );
-    }
-  };
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+  const chartPeriodo = desgloseMes.map(d => ({ name: d.mes, cantidad: d.total_tickets }));
 
   return (
-    <div className="card">
-      <h2>5. Análisis Dinámico (Selecciona la Dimensión)</h2>
+    <div className="charts-main-container">
+      <h2>3. Análisis Visual (Requerimientos PDF)</h2>
       
-      <div style={{ marginBottom: '20px' }}>
-        <label style={{ fontWeight: 'bold', marginRight: '10px' }}>Ver análisis por:</label>
-        <select value={dimension} onChange={(e) => setDimension(e.target.value)} className="select-input">
-          <option value="categoria">Categoría</option>
-          <option value="canal">Canal</option>
-          <option value="agente">Agente (Tiempo Promedio)</option>
-          <option value="segmento">Segmento</option>
-          <option value="periodo">Periodo (Meses)</option>
-        </select>
-      </div>
+      <div className="charts-grid-layout">
+        {/* Gráfico 1: Categoría */}
+        <div className="chart-box-item">
+          <h3>Volumen por Categoría</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={dataCategoria}>
+              <CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="name" /><YAxis /><Tooltip />
+              <Bar dataKey="cantidad" fill="#3b82f6" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
 
-      <ResponsiveContainer width="100%" height={350}>
-        {renderChart()}
-      </ResponsiveContainer>
+        {/* Gráfico 2: Canal */}
+        <div className="chart-box-item">
+          <h3>Volumen por Canal</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={dataCanal}>
+              <CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="name" /><YAxis /><Tooltip />
+              <Bar dataKey="cantidad" fill="#10b981" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Gráfico 3: Agente */}
+        <div className="chart-box-item">
+          <h3>Tiempo Promedio por Agente</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={dataAgente}>
+              <CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="name" /><YAxis /><Tooltip />
+              <Bar dataKey="cantidad" fill="#8b5cf6" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Gráfico 4: Segmento */}
+        <div className="chart-box-item">
+          <h3>Distribución por Segmento</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <PieChart>
+              <Pie data={dataSegmento} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                {dataSegmento.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip /><Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Gráfico 5: Periodo (Ocupa las dos columnas) */}
+        <div className="chart-box-item chart-full-width">
+          <h3>Evolución por Periodo (Meses)</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={chartPeriodo} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="name" /><YAxis /><Tooltip />
+              <Line type="monotone" dataKey="cantidad" stroke="#ef4444" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,322 @@
+/* Estilos exclusivos para MlAnalysis (independientes del resto de la app) */
+
+.ml-container {
+  --ml-acento: #7c3aed;
+  --ml-acento-suave: #f5f3ff;
+  --ml-acento-linea: #ddd6fe;
+  --ml-tinta: #0f172a;
+  --ml-tinta-2: #475569;
+  --ml-tinta-3: #94a3b8;
+  --ml-linea: #e2e8f0;
+  --ml-suave: #f8fafc;
+  --ml-rojo: #dc2626;
+  --ml-verde: #059669;
+
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  color: var(--ml-tinta);
+}
+
+/* --- Encabezado --- */
+.ml-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.ml-container h2 {
+  font-size: 20px;
+  margin: 0 0 4px;
+  border: none;
+  padding: 0;
+  color: var(--ml-tinta);
+}
+.ml-descripcion { margin: 0; font-size: 14px; color: var(--ml-tinta-2); max-width: 640px; }
+
+.ml-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--ml-acento);
+  transition: background-color 0.15s;
+}
+.ml-btn:hover:not(:disabled) { background-color: #6d28d9; }
+.ml-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.ml-container button:focus-visible { outline: 2px solid var(--ml-acento); outline-offset: 2px; }
+
+.ml-error {
+  margin: 16px 0 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+.ml-resultados-container { margin-top: 20px; display: flex; flex-direction: column; gap: 28px; }
+
+.ml-resumen-linea {
+  margin: 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--ml-acento-suave);
+  border: 1px solid var(--ml-acento-linea);
+  font-size: 13px;
+  color: #5b21b6;
+}
+.ml-resumen-linea strong { font-size: 16px; color: var(--ml-tinta); font-variant-numeric: tabular-nums; }
+
+/* --- Títulos de sección (la "historia" en orden) --- */
+.ml-seccion { display: flex; flex-direction: column; gap: 12px; }
+.ml-seccion-titulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 16px;
+  color: var(--ml-tinta);
+}
+.ml-seccion-titulo span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ml-acento);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* --- Fila 1: cuatro tarjetas de igual altura --- */
+.ml-fila-1 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+.ml-tarjeta {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 18px;
+  background: var(--ml-suave);
+  border: 1px solid var(--ml-linea);
+  border-radius: 10px;
+  min-width: 0;
+}
+.ml-tarjeta h3 { margin: 0 0 8px; font-size: 14px; color: #334155; }
+
+.ml-tarjeta-dona { align-items: center; text-align: center; }
+.ml-dona { width: 120px; height: 120px; }
+.ml-dona-centro { font-size: 17px; font-weight: 700; fill: var(--ml-tinta); }
+.ml-tarjeta-nota { margin: 8px 0 0; font-size: 12px; color: var(--ml-tinta-2); line-height: 1.4; }
+
+/* Tarjeta de satisfacción */
+.ml-tarjeta-sat { gap: 12px; }
+.ml-tarjeta-sat h3 { margin-bottom: 0; }
+.ml-sat-fila { display: flex; flex-direction: column; gap: 5px; }
+.ml-sat-linea { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--ml-tinta-2); }
+.ml-sat-linea strong { font-size: 18px; color: var(--ml-tinta); font-variant-numeric: tabular-nums; }
+.ml-texto-verde { color: var(--ml-verde) !important; }
+.ml-texto-rojo { color: var(--ml-rojo) !important; }
+.ml-sat-escala { font-size: 11px; color: var(--ml-tinta-3); margin-top: -4px; }
+
+.ml-medidor { height: 8px; background: #e9edf3; border-radius: 4px; overflow: hidden; }
+.ml-medidor > span { display: block; height: 100%; border-radius: 4px; }
+.ml-medidor-verde { background: var(--ml-verde); }
+.ml-medidor-rojo { background: var(--ml-rojo); }
+
+.ml-correlacion { margin-top: auto; }
+.ml-escala-corr { position: relative; height: 8px; margin-top: 8px; border-radius: 4px; background: linear-gradient(90deg, #fecaca, #f1f5f9 50%, #bbf7d0); }
+.ml-escala-corr-centro { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: #94a3b8; }
+.ml-escala-corr-marca {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--ml-acento);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px var(--ml-acento);
+}
+.ml-escala-corr-ejes { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--ml-tinta-3); }
+
+/* --- Cajas --- */
+.ml-box {
+  border: 1px solid var(--ml-linea);
+  border-radius: 10px;
+  padding: 18px 20px;
+  min-width: 0;
+}
+.ml-box h3 { margin: 0 0 2px; font-size: 15px; color: var(--ml-tinta); }
+.ml-subtitulo { margin: 0 0 16px; font-size: 14px; color: var(--ml-tinta-3); }
+.ml-vacio { margin: 0; font-size: 13px; font-style: italic; color: var(--ml-tinta-3); }
+
+/* --- Fila 2: forest plot de Odds Ratio (todo el ancho) --- */
+.ml-forest {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto; /* centrado dentro de la tarjeta */
+}
+
+.ml-forest-fila {
+  display: grid;
+  grid-template-columns: 130px minmax(260px, 1fr) 64px 130px;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+.ml-forest-grupo .ml-forest-fila:hover { background: var(--ml-suave); }
+
+.ml-forest-cabecera {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ml-tinta-3);
+  border-bottom: 1px solid var(--ml-linea);
+  border-radius: 0;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+.ml-forest-ejes { display: flex; justify-content: space-between; align-items: center; }
+.ml-forest-or-cab { text-align: right; }
+
+.ml-forest-grupo { padding-top: 8px; }
+.ml-forest-grupo + .ml-forest-grupo { border-top: 1px solid #eef2f7; margin-top: 4px; }
+.ml-variable {
+  margin: 0 0 2px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  text-transform: capitalize;
+}
+
+.ml-forest-cat { font-size: 13px; color: var(--ml-tinta); }
+.ml-forest-or { text-align: right; font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
+.ml-forest-efecto { margin: 0; font-size: 14px; color: var(--ml-tinta-2); line-height: 1.4; }
+
+.ml-forest-plot { position: relative; height: 22px; }
+.ml-forest-plot::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: #e2e8f0;
+}
+.ml-forest-centro {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: #94a3b8;
+  border-radius: 1px;
+}
+.ml-forest-tallo {
+  position: absolute;
+  top: 50%;
+  height: 3px;
+  margin-top: -1.5px;
+  border-radius: 2px;
+  background: #94a3b8;
+}
+.ml-forest-punto {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: #94a3b8;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px #94a3b8;
+}
+
+.ml-forest-alto .ml-forest-or { color: var(--ml-rojo); }
+.ml-forest-alto .ml-forest-tallo { background: var(--ml-rojo); }
+.ml-forest-alto .ml-forest-punto { background: var(--ml-rojo); box-shadow: 0 0 0 1px var(--ml-rojo); }
+.ml-forest-bajo .ml-forest-or { color: var(--ml-verde); }
+.ml-forest-bajo .ml-forest-tallo { background: var(--ml-verde); }
+.ml-forest-bajo .ml-forest-punto { background: var(--ml-verde); box-shadow: 0 0 0 1px var(--ml-verde); }
+
+/* --- Fila 3: tasas por grupo --- */
+.ml-leyenda-tasas { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0 0 14px; font-size: 14px; color: var(--ml-tinta-2); }
+.ml-muestra { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.ml-muestra-sobre { background: var(--ml-rojo); }
+.ml-muestra-bajo { background: var(--ml-acento); margin-left: 10px; }
+.ml-muestra-linea { width: 2px; height: 12px; background: var(--ml-tinta); display: inline-block; margin-left: 10px; }
+
+.ml-tasas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+.ml-grupo-tasas {
+  padding: 14px 16px;
+  background: var(--ml-suave);
+  border: 1px solid var(--ml-linea);
+  border-radius: 8px;
+}
+.ml-grupo-tasas h4 { margin: 0 0 10px; font-size: 13px; font-weight: 700; color: #334155; text-transform: capitalize; }
+
+.ml-lista-tasas { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ml-lista-tasas li { display: grid; grid-template-columns: 90px minmax(0, 1fr) 48px; align-items: center; gap: 10px; font-size: 12.5px; }
+.ml-tasa-cat { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ml-tinta); }
+.ml-tasa-pista { position: relative; height: 8px; background: #e9edf3; border-radius: 4px; }
+.ml-tasa-relleno { display: block; height: 100%; background: var(--ml-acento); border-radius: 4px; }
+.ml-tasa-sobre { background: var(--ml-rojo); }
+.ml-tasa-global { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--ml-tinta); border-radius: 1px; }
+.ml-tasa-valor { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* --- Fila 4: interpretación --- */
+.ml-interpretacion {
+  background: var(--ml-acento-suave);
+  border: 1px solid var(--ml-acento-linea);
+  border-left: 4px solid var(--ml-acento);
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+.ml-interpretacion-titulo { display: block; font-size: 13px; color: #5b21b6; margin-bottom: 6px; }
+.ml-note { margin: 0; font-size: 14px; line-height: 1.6; color: #334155; }
+
+/* --- Pantallas medianas y pequeñas --- */
+@media (max-width: 900px) {
+  /* El forest plot pasa a dos líneas por categoría */
+  .ml-forest-cabecera { display: none; }
+  .ml-forest-fila {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "cat or" "plot plot" "efecto efecto";
+    gap: 6px 12px;
+  }
+  .ml-forest-cat { grid-area: cat; }
+  .ml-forest-or { grid-area: or; }
+  .ml-forest-plot { grid-area: plot; }
+  .ml-forest-efecto { grid-area: efecto; }
+}
+@media (max-width: 560px) {
+  .ml-container { padding: 16px; }
+  .ml-lista-tasas li { grid-template-columns: 70px minmax(0, 1fr) 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ml-btn { transition: none; }
+}
