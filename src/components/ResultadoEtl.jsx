@@ -190,20 +190,18 @@ export default function ResultadoEtl() {
     );
   };
 
-  // CAMBIO 1: Dona con nombres arriba y gráfico abajo centrado
   const renderDona = () => {
     const datos = resumen?.emparejamiento_clientes;
     if (!datos) return <p className="res-empty">Sin datos de emparejamiento.</p>;
 
     const entradas = Object.entries(datos);
     const total = entradas.reduce((a, [, n]) => a + n, 0);
-    const R = 60; // Dona más grande
+    const R = 60;
     const C = 2 * Math.PI * R;
     let acumulado = 0;
 
     return (
       <div className="res-dona-layout">
-        {/* Nombres arriba */}
         <ul className="res-leyenda">
           {entradas.map(([metodo, n]) => (
             <li key={metodo}>
@@ -215,7 +213,6 @@ export default function ResultadoEtl() {
           ))}
         </ul>
 
-        {/* Gráfico abajo y centrado */}
         <div className="res-dona-wrapper">
           <svg viewBox="0 0 160 160" className="res-dona" role="img"
                aria-label="Distribución de métodos de emparejamiento de clientes">
@@ -271,6 +268,50 @@ export default function ResultadoEtl() {
           );
         })}
       </ul>
+    );
+  };
+
+  // NUEVO: Panel de emparejamiento de encuestas
+  const renderEncuestasResumen = () => {
+    const datos = resumen?.emparejamiento_encuestas;
+    if (!datos) return null;
+
+    const entradas = Object.entries(datos);
+    const total = entradas.reduce((a, [, n]) => a + n, 0);
+
+    const enCuarentena = resumen.cuarentena
+      ?.filter(c => c.fuente === 'encuestas')
+      .reduce((acc, c) => acc + c.cantidad, 0) || 0;
+
+    return (
+      <section className="res-panel" style={{ marginTop: '20px' }}>
+        <h3>Emparejamiento de encuestas con el CRM</h3>
+        <p className="res-panel-ayuda">Cómo se asignó el cliente de cada encuesta al CRM.</p>
+        
+        <ul className="res-leyenda" style={{ marginBottom: '16px' }}>
+          {entradas.map(([metodo, n]) => (
+            <li key={metodo}>
+              <span className="res-punto" style={{ background: (METODOS[metodo] || {}).color || '#94a3b8' }} />
+              <span className="res-leyenda-nombre">{(METODOS[metodo] || {}).label || metodo.replace('_', ' ')}</span>
+              <span className="res-leyenda-valor">{fmt(n)}</span>
+              <span className="res-leyenda-pct">{total ? ((n / total) * 100).toFixed(1) : '0.0'}%</span>
+            </li>
+          ))}
+        </ul>
+
+        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+          <div className="res-kpi res-kpi-ok" style={{ flex: 1 }}>
+            <span className="res-kpi-label">Integradas con ticket</span>
+            <strong className="res-kpi-valor">{fmt(total)}</strong>
+            <span className="res-kpi-nota">Encuestas que sí encontraron su ticket</span>
+          </div>
+          <div className="res-kpi res-kpi-alerta" style={{ flex: 1 }}>
+            <span className="res-kpi-label">Encuestas en cuarentena</span>
+            <strong className="res-kpi-valor">{fmt(enCuarentena)}</strong>
+            <span className="res-kpi-nota">Sin ticket o con datos inválidos</span>
+          </div>
+        </div>
+      </section>
     );
   };
 
@@ -403,6 +444,8 @@ export default function ResultadoEtl() {
           </section>
         </div>
       )}
+
+      {renderEncuestasResumen()}
 
       <section className="nx">
         <div className="nx-cabecera">

@@ -458,3 +458,42 @@
 @media (max-width: 480px) {
   .res-kpis { grid-template-columns: 1fr; }
 }
+
+/* ========================================= */
+/* NUEVOS ESTILOS PARA EL PANEL DE ENCUESTAS */
+/* ========================================= */
+
+.res-panel-encuestas {
+  margin-top: 24px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.res-panel-encuestas h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: #1e293b;
+}
+
+.res-panel-encuestas .res-panel-ayuda {
+  margin: 0 0 16px 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.res-encuestas-kpis {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.res-encuestas-kpis .res-kpi {
+  flex: 1;
+  min-width: 200px;
+}
+
+.res-encuestas-kpis .res-kpi-valor {
+  font-size: 24px;
+}
