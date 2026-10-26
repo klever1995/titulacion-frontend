@@ -271,7 +271,7 @@ export default function ResultadoEtl() {
     );
   };
 
-  // NUEVO: Panel de emparejamiento de encuestas
+  // NUEVO PANEL: Integración con Encuestas
   const renderEncuestasResumen = () => {
     const datos = resumen?.emparejamiento_encuestas;
     if (!datos) return null;
@@ -285,30 +285,38 @@ export default function ResultadoEtl() {
 
     return (
       <section className="res-panel" style={{ marginTop: '20px' }}>
-        <h3>Emparejamiento de encuestas con el CRM</h3>
-        <p className="res-panel-ayuda">Cómo se asignó el cliente de cada encuesta al CRM.</p>
+        <h3>Integración con Encuestas</h3>
+        <p className="res-panel-ayuda">
+          Las encuestas se validaron contra el CRM y se cruzaron con los tickets a través del id_ticket.
+        </p>
         
-        <ul className="res-leyenda" style={{ marginBottom: '16px' }}>
-          {entradas.map(([metodo, n]) => (
-            <li key={metodo}>
-              <span className="res-punto" style={{ background: (METODOS[metodo] || {}).color || '#94a3b8' }} />
-              <span className="res-leyenda-nombre">{(METODOS[metodo] || {}).label || metodo.replace('_', ' ')}</span>
-              <span className="res-leyenda-valor">{fmt(n)}</span>
-              <span className="res-leyenda-pct">{total ? ((n / total) * 100).toFixed(1) : '0.0'}%</span>
-            </li>
-          ))}
-        </ul>
-
-        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginTop: '10px' }}>
           <div className="res-kpi res-kpi-ok" style={{ flex: 1 }}>
-            <span className="res-kpi-label">Integradas con ticket</span>
-            <strong className="res-kpi-valor">{fmt(total)}</strong>
-            <span className="res-kpi-nota">Encuestas que sí encontraron su ticket</span>
+            <span className="res-kpi-label">Emparejamiento con CRM</span>
+            <div style={{ marginTop: '8px' }}>
+              {entradas.map(([metodo, n]) => (
+                <div key={metodo} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px' }}>
+                  <span style={{ color: (METODOS[metodo] || {}).color || '#94a3b8' }}>
+                    {(METODOS[metodo] || {}).label || metodo.replace('_', ' ')}
+                  </span>
+                  <strong>{fmt(n)}</strong>
+                </div>
+              ))}
+            </div>
           </div>
+
           <div className="res-kpi res-kpi-alerta" style={{ flex: 1 }}>
-            <span className="res-kpi-label">Encuestas en cuarentena</span>
-            <strong className="res-kpi-valor">{fmt(enCuarentena)}</strong>
-            <span className="res-kpi-nota">Sin ticket o con datos inválidos</span>
+            <span className="res-kpi-label">Asociación con Tickets</span>
+            <div style={{ marginTop: '8px', fontSize: '13px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <span>Integradas</span>
+                <strong>{fmt(total)}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>En cuarentena</span>
+                <strong>{fmt(enCuarentena)}</strong>
+              </div>
+            </div>
           </div>
         </div>
       </section>
